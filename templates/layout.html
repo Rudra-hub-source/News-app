@@ -1,28 +1,106 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>News Media</title>
+    <title>News Hub - Global News & Articles</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              'dark-bg': '#0f0f0f',
+              'dark-card': '#1a1a1a',
+              'dark-border': '#2a2a2a',
+            }
+          }
+        }
+      }
+    </script>
   </head>
-  <body class="bg-gray-100 min-h-screen">
-    <nav class="bg-white shadow">
-      <div class="container mx-auto px-4 py-4 flex items-center justify-between">
-        <a href="/" class="text-xl font-semibold text-gray-800">News Manager</a>
-        <div class="space-x-3">
-          <a href="/create" class="bg-blue-600 text-white px-3 py-2 rounded-md">New Article</a>
+  <body class="bg-gradient-to-br from-gray-900 via-black to-gray-800 text-white min-h-screen">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-black via-gray-900 to-black border-b border-orange-500/20 shadow-2xl">
+      <div class="container mx-auto px-4 py-6">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-8">
+            <a href="/" class="text-3xl font-bold bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent metallic-text">
+              News Hub
+            </a>
+
+            <nav class="hidden md:flex space-x-6">
+              <a href="/" class="text-gray-300 hover:text-orange-400 transition duration-300 font-medium metallic-link">Home</a>
+              <a href="/articles" class="text-gray-300 hover:text-orange-400 transition duration-300 font-medium metallic-link">My Articles</a>
+              <a href="/articles/create" class="text-gray-300 hover:text-orange-400 transition duration-300 font-medium metallic-link">Write</a>
+              <div class="relative group">
+                <button class="text-gray-300 hover:text-orange-400 transition duration-300 font-medium metallic-link flex items-center">
+                  Categories
+                  <svg class="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                  </svg>
+                </button>
+                <div class="absolute top-full left-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300 border border-gray-700">
+                  <a href="/category/business" class="block px-4 py-2 text-sm text-gray-300 hover:bg-orange-500/10 hover:text-orange-400">Business</a>
+                  <a href="/category/entertainment" class="block px-4 py-2 text-sm text-gray-300 hover:bg-orange-500/10 hover:text-orange-400">Entertainment</a>
+                  <a href="/category/general" class="block px-4 py-2 text-sm text-gray-300 hover:bg-orange-500/10 hover:text-orange-400">General</a>
+                  <a href="/category/health" class="block px-4 py-2 text-sm text-gray-300 hover:bg-orange-500/10 hover:text-orange-400">Health</a>
+                  <a href="/category/science" class="block px-4 py-2 text-sm text-gray-300 hover:bg-orange-500/10 hover:text-orange-400">Science</a>
+                  <a href="/category/sports" class="block px-4 py-2 text-sm text-gray-300 hover:bg-orange-500/10 hover:text-orange-400">Sports</a>
+                  <a href="/category/technology" class="block px-4 py-2 text-sm text-gray-300 hover:bg-orange-500/10 hover:text-orange-400">Technology</a>
+                </div>
+              </div>
+            </nav>
+          </div>
+
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <input type="text" placeholder="Search news..." class="w-64 px-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent metallic-input">
+              <svg class="w-5 h-5 absolute right-3 top-2.5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
-    </nav>
+    </header>
 
-    <main class="container mx-auto px-4 py-8">
+    <main class="flex-1">
       {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
-          <div class="space-y-2 mb-4">
-            {% for category, msg in messages %}
-              <div class="p-3 rounded {{ 'bg-green-100 text-green-800' if category=='success' else 'bg-red-100 text-red-800' }}">{{ msg }}</div>
-            {% endfor %}
+          <div class="container mx-auto px-4 py-6">
+            <div class="space-y-3">
+              {% for category, msg in messages %}
+                <div class="flex items-center p-4 rounded-lg shadow-lg {{ 'bg-green-900/50 border border-green-700 text-green-200' if category=='success' else 'bg-red-900/50 border border-red-700 text-red-200' if category=='error' else 'bg-blue-900/50 border border-blue-700 text-blue-200' }}">
+                  <div class="flex-shrink-0">
+                    {% if category == 'success' %}
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% elif category == 'error' %}
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% else %}
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+                      </svg>
+                    {% endif %}
+                  </div>
+                  <div class="ml-3">
+                    <p class="text-sm font-medium">{{ msg }}</p>
+                  </div>
+                  <div class="ml-auto pl-3">
+                    <button onclick="this.parentElement.parentElement.remove()" class="inline-flex rounded-md p-1.5 focus:outline-none focus:ring-2 focus:ring-gray-600 focus:ring-offset-2">
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
           </div>
         {% endif %}
       {% endwith %}
@@ -30,8 +108,103 @@
       {% block content %}{% endblock %}
     </main>
 
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-black via-gray-900 to-black border-t border-orange-500/20 mt-16">
+      <div class="container mx-auto px-4 py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="col-span-1 md:col-span-2">
+            <a href="/" class="text-2xl font-bold bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent metallic-text mb-4 block">
+              News Hub
+            </a>
+            <p class="text-gray-400 mb-4">
+              Your ultimate source for global news, breaking stories, and in-depth analysis. Stay informed with the latest updates from around the world.
+            </p>
+            <div class="flex space-x-4">
+              <a href="#" class="text-gray-400 hover:text-orange-400 transition duration-300">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M20 10c0-5.523-4.477-10-10-10S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z" clip-rule="evenodd"></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-orange-400 transition duration-300">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"></path>
+                </svg>
+              </a>
+              <a href="#" class="text-gray-400 hover:text-orange-400 transition duration-300">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M12.017 0H7.99C3.58 0 0 3.58 0 7.99v4.02c0 4.41 3.58 7.99 7.99 7.99h4.027c4.41 0 7.99-3.58 7.99-7.99V7.99C20.007 3.58 16.427 0 12.017 0zm5.17 12.01c0 2.85-2.32 5.17-5.17 5.17H7.99c-2.85 0-5.17-2.32-5.17-5.17V7.99c0-2.85 2.32-5.17 5.17-5.17h4.027c2.85 0 5.17 2.32 5.17 5.17v4.02z" clip-rule="evenodd"></path>
+                  <path fill-rule="evenodd" d="M10 5.38a4.62 4.62 0 100 9.24 4.62 4.62 0 000-9.24zm0 7.62a3 3 0 110-6 3 3 0 010 6z" clip-rule="evenodd"></path>
+                  <circle cx="14.8" cy="5.2" r="1.1"></circle>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold text-white mb-4">Quick Links</h3>
+            <ul class="space-y-2">
+              <li><a href="/" class="text-gray-400 hover:text-orange-400 transition duration-300">Home</a></li>
+              <li><a href="/articles" class="text-gray-400 hover:text-orange-400 transition duration-300">My Articles</a></li>
+              <li><a href="/articles/create" class="text-gray-400 hover:text-orange-400 transition duration-300">Write Article</a></li>
+              <li><a href="/category/general" class="text-gray-400 hover:text-orange-400 transition duration-300">News Categories</a></li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 class="text-lg font-semibold text-white mb-4">Categories</h3>
+            <ul class="space-y-2">
+              <li><a href="/category/business" class="text-gray-400 hover:text-orange-400 transition duration-300">Business</a></li>
+              <li><a href="/category/technology" class="text-gray-400 hover:text-orange-400 transition duration-300">Technology</a></li>
+              <li><a href="/category/sports" class="text-gray-400 hover:text-orange-400 transition duration-300">Sports</a></li>
+              <li><a href="/category/entertainment" class="text-gray-400 hover:text-orange-400 transition duration-300">Entertainment</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center">
+          <p class="text-gray-400">
+            &copy; 2024 News Hub. All rights reserved. Powered by NewsAPI.
+          </p>
+        </div>
+      </div>
+    </footer>
+
     <!-- Frontend modules -->
     <script type="module" src="/static/js/main.js"></script>
     <script src="/static/main.js"></script>
   </body>
 </html>
+
+<style>
+.metallic-text {
+  text-shadow: 0 0 10px rgba(255, 165, 0, 0.5), 0 0 20px rgba(255, 69, 0, 0.3), 0 0 30px rgba(255, 0, 0, 0.2);
+}
+
+.metallic-link {
+  position: relative;
+}
+
+.metallic-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #ff6b35, #f7931e, #ff4757);
+  transition: width 0.3s ease;
+}
+
+.metallic-link:hover::after {
+  width: 100%;
+}
+
+.metallic-input {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 10px rgba(255, 165, 0, 0.1);
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+}
+
+.metallic-input:focus {
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 165, 0, 0.3);
+}
+</style>

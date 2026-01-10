@@ -1,6 +1,6 @@
 // Simple environment config for frontend
 window.APP_ENV = {
-  API_BASE: '/api'
+  API_BASE: ''
 };
 
 export default window.APP_ENV;

@@ -17,18 +17,20 @@ class ArticleService:
         return Article.query.get_or_404(article_id)
 
     @staticmethod
-    def create_article(title, content, author):
-        a = Article(title=title, content=content, author=author)
+    def create_article(title, content, author='Anonymous'):
+        a = Article(title=title, content=content, author=author or 'Anonymous')
         db.session.add(a)
         db.session.commit()
+        return a
 
     @staticmethod
     def update_article(article_id, title, content, author):
         a = Article.query.get_or_404(article_id)
         a.title = title
         a.content = content
-        a.author = author
+        a.author = author or 'Anonymous'
         db.session.commit()
+        return a
 
     @staticmethod
     def delete_article(article_id):
