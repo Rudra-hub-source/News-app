@@ -1,6 +1,9 @@
 from flask import Request
+import bleach
+
+
 def parse_article_form(req: Request):
-    """Parse and validate article data from JSON or form data.
+    """Parse, validate and sanitize article data from JSON or form data.
 
     Returns (True, payload) on success or (False, error_message) on failure.
     """
@@ -30,4 +33,19 @@ def parse_article_form(req: Request):
     if author and len(author) > 100:
         return False, 'author name too long'
 
-    return True, {'title': title, 'content': content, 'author': author}
+    # Sanitize HTML content: allow a small set of tags and attributes
+    allowed_tags = [
+        'p', 'br', 'strong', 'em', 'ul', 'ol', 'li', 'a', 'blockquote', 'code', 'pre'
+    ]
+    allowed_attrs = {
+        'a': ['href', 'title', 'rel', 'target']
+    }
+    cleaned = bleach.clean(
+        content,
+        tags=allowed_tags,
+        attributes=allowed_attrs,
+        protocols=['http', 'https', 'mailto'],
+        strip=True
+    )
+
+    return True, {'title': title, 'content': cleaned, 'author': author}
