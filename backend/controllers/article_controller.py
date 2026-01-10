@@ -40,8 +40,11 @@ def api_get_article(article_id):
 def api_create_article():
     valid, payload = parse_article_form(request)
     if not valid:
-        return error(payload)
-    a = create_article(payload['title'], payload['content'], payload.get('author'))
+        return error(payload, code=400)
+    try:
+        a = create_article(payload['title'], payload['content'], payload.get('author'))
+    except Exception as e:
+        return error('Failed to create article: ' + str(e), code=500)
     return created(data={"id": a.id})
 
 
@@ -49,8 +52,11 @@ def api_create_article():
 def api_update_article(article_id):
     valid, payload = parse_article_form(request)
     if not valid:
-        return error(payload)
-    a = update_article(article_id, payload['title'], payload['content'], payload.get('author'))
+        return error(payload, code=400)
+    try:
+        a = update_article(article_id, payload['title'], payload['content'], payload.get('author'))
+    except Exception as e:
+        return error('Failed to update article: ' + str(e), code=500)
     if not a:
         return not_found('Article not found')
     return ok(data={"id": a.id})

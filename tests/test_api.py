@@ -17,3 +17,14 @@ def test_create_and_delete_article():
     # delete
     r2 = requests.delete(BASE + f'/api/articles/{aid}')
     assert r2.status_code == 200
+
+
+def test_validation_failures():
+    # missing title
+    payload = {'title':'','content':'x','author':'t'}
+    r = requests.post(BASE + '/api/articles', json=payload)
+    assert r.status_code == 400
+    # too long title
+    payload = {'title':'x'*300,'content':'x','author':'t'}
+    r2 = requests.post(BASE + '/api/articles', json=payload)
+    assert r2.status_code == 400
