@@ -1,14 +1,39 @@
+import sys
+import os
+
+# If a local virtualenv exists at ./venv, prefer its site-packages so
+# running `python app.py` (without activating the venv) can still import
+# installed dependencies.
+venv_dir = os.path.join(os.path.dirname(__file__), 'venv')
+if os.path.isdir(venv_dir):
+    pyver = f"python{sys.version_info.major}.{sys.version_info.minor}"
+    site_packages = os.path.join(venv_dir, 'lib', pyver, 'site-packages')
+    if os.path.isdir(site_packages) and site_packages not in sys.path:
+        sys.path.insert(0, site_packages)
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey')
+# Uploads
+app.config['UPLOAD_FOLDER'] = os.path.join(app.instance_path, 'uploads')
+app.config['UPLOAD_URL_PREFIX'] = '/uploads'
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 db = SQLAlchemy(app)
+
+# Register backend middleware and API blueprint (if available)
+try:
+    from backend import middleware, router as api_router
+    middleware.request_logger(app)
+    app.register_blueprint(api_router.api_bp, url_prefix='/api')
+except Exception:
+    # ignore if backend package not present or import fails
+    pass
 
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -49,7 +74,7 @@ def create():
         db.session.add(a)
         db.session.commit()
         flash('Article created.', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('index'), 303)
     return render_template('create.html')
 
 @app.route('/edit/<int:article_id>', methods=['GET', 'POST'])
@@ -61,7 +86,7 @@ def edit(article_id):
         a.author = request.form.get('author', '').strip()
         db.session.commit()
         flash('Article updated.', 'success')
-        return redirect(url_for('detail', article_id=a.id))
+        return redirect(url_for('detail', article_id=a.id), 303)
     return render_template('edit.html', article=a)
 
 @app.route('/delete/<int:article_id>', methods=['POST'])
@@ -70,7 +95,7 @@ def delete(article_id):
     db.session.delete(a)
     db.session.commit()
     flash('Article deleted.', 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('index'), 303)
 
 @app.route('/initdb')
 def initdb():
