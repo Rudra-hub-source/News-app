@@ -10,6 +10,15 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey')
 
 db = SQLAlchemy(app)
 
+# Register backend middleware and API blueprint (if available)
+try:
+    from backend import middleware, router as api_router
+    middleware.request_logger(app)
+    app.register_blueprint(api_router.api_bp, url_prefix='/api')
+except Exception:
+    # ignore if backend package not present or import fails
+    pass
+
 class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -49,7 +58,7 @@ def create():
         db.session.add(a)
         db.session.commit()
         flash('Article created.', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('index'), 303)
     return render_template('create.html')
 
 @app.route('/edit/<int:article_id>', methods=['GET', 'POST'])
@@ -61,7 +70,7 @@ def edit(article_id):
         a.author = request.form.get('author', '').strip()
         db.session.commit()
         flash('Article updated.', 'success')
-        return redirect(url_for('detail', article_id=a.id))
+        return redirect(url_for('detail', article_id=a.id), 303)
     return render_template('edit.html', article=a)
 
 @app.route('/delete/<int:article_id>', methods=['POST'])
@@ -70,7 +79,7 @@ def delete(article_id):
     db.session.delete(a)
     db.session.commit()
     flash('Article deleted.', 'success')
-    return redirect(url_for('index'))
+    return redirect(url_for('index'), 303)
 
 @app.route('/initdb')
 def initdb():
