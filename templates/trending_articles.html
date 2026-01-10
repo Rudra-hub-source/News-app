@@ -1,0 +1,44 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="min-h-screen py-12">
+  <div class="container mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+      <h1 class="text-5xl font-bold text-white mb-4">
+        <span class="bg-gradient-to-r from-orange-400 to-red-500 bg-clip-text text-transparent">
+          🔥 Trending Articles
+        </span>
+      </h1>
+      <p class="text-gray-400">Most viewed articles</p>
+    </div>
+
+    {% if articles %}
+    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      {% for article in articles %}
+        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-orange-500/50 transition duration-300">
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-3 py-1 bg-orange-600 text-white text-xs rounded-full">{{ article.view_count or 0 }} views</span>
+            <span class="text-gray-500 text-sm">{{ article.created_at.strftime('%b %d') }}</span>
+          </div>
+          <h2 class="text-xl font-bold text-white mb-3">{{ article.title }}</h2>
+          <p class="text-gray-400 mb-4">{{ article.content[:100] }}...</p>
+          <div class="flex justify-between items-center">
+            <span class="text-sm text-gray-500">{{ article.author }}</span>
+            <div class="space-x-2">
+              <a href="/articles/{{ article.id }}" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">Read</a>
+              <a href="/articles/edit/{{ article.id }}" class="px-3 py-1 bg-yellow-600 text-white rounded text-sm">Edit</a>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16">
+      <h3 class="text-2xl font-bold text-gray-300 mb-2">No Trending Articles</h3>
+      <p class="text-gray-500 mb-4">Articles will appear here as they gain views.</p>
+      <a href="/articles/create" class="px-6 py-3 bg-green-600 text-white rounded-xl">Write Article</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

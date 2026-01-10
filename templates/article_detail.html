@@ -14,7 +14,7 @@
         {{ article.content|replace('\n', '<br>')|safe }}
       </div>
       <div class="flex space-x-4">
-        <a href="/articles" class="px-6 py-3 bg-gray-600 text-white rounded-xl">Back to Articles</a>
+        <a href="{{ url_for('main.articles.index') }}" class="px-6 py-3 bg-gray-600 text-white rounded-xl">Back to Articles</a>
         <a href="/articles/edit/{{ article.id }}" class="px-6 py-3 bg-yellow-600 text-white rounded-xl">Edit</a>
         <form method="POST" action="/articles/delete/{{ article.id }}" class="inline">
           <button type="submit" class="px-6 py-3 bg-red-600 text-white rounded-xl">Delete</button>

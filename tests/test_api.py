@@ -1,5 +1,5 @@
 import requests
-BASE = 'http://127.0.0.1:5000'
+BASE = 'http://127.0.0.1:3000'
 
 def test_list_articles():
     r = requests.get(BASE + '/api/articles')

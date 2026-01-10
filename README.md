@@ -21,7 +21,7 @@ pip install -r requirements.txt
 
 ```bash
 python app.py
-# then open http://127.0.0.1:5000/initdb
+# then open http://127.0.0.1:3000/initdb
 ```
 
 4. Run the app:
@@ -30,5 +30,5 @@ python app.py
 python app.py
 ```
 
-Open http://127.0.0.1:5000
+Open http://127.0.0.1:3000
 # News-app

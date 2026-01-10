@@ -5,9 +5,16 @@ bp = Blueprint('articles', __name__)
 
 @bp.route('/')
 def index():
-    q = request.args.get('q', '')
-    articles = ArticleService.get_articles(q)
-    return render_template('articles.html', articles=articles, q=q)
+    try:
+        q = request.args.get('q', '')
+        articles = ArticleService.get_articles(q)
+        return render_template('articles.html', articles=articles, q=q)
+    except Exception as e:
+        return f'Articles page error: {str(e)}', 500
+
+@bp.route('/test')
+def test():
+    return 'Articles controller is working!'
 
 @bp.route('/<int:article_id>')
 def detail(article_id):
@@ -30,7 +37,9 @@ def create():
         except Exception as e:
             flash(f'Error creating article: {str(e)}', 'error')
             return redirect(url_for('main.articles.create'))
-    return render_template('article_create.html')
+    
+    articles = ArticleService.get_articles()
+    return render_template('article_create.html', articles=articles)
 
 @bp.route('/edit/<int:article_id>', methods=['GET', 'POST'])
 def edit(article_id):
@@ -59,3 +68,13 @@ def init_db():
     db.create_all()
     flash('Database initialized!', 'success')
     return redirect(url_for('main.articles.index'))
+
+@bp.route('/trending')
+def trending():
+    articles = ArticleService.get_trending_articles()
+    return render_template('trending_articles.html', articles=articles)
+
+@bp.route('/latest')
+def latest():
+    articles = ArticleService.get_latest_articles()
+    return render_template('latest_articles.html', articles=articles)

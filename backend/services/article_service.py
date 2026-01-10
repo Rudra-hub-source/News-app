@@ -1,5 +1,6 @@
 from backend.state import db
 from backend.models.article import Article
+from datetime import datetime, timedelta
 
 class ArticleService:
     @staticmethod
@@ -14,7 +15,18 @@ class ArticleService:
 
     @staticmethod
     def get_article(article_id):
-        return Article.query.get_or_404(article_id)
+        article = Article.query.get_or_404(article_id)
+        article.view_count = (article.view_count or 0) + 1
+        db.session.commit()
+        return article
+
+    @staticmethod
+    def get_trending_articles(limit=10):
+        return Article.query.order_by(Article.view_count.desc()).limit(limit).all()
+    
+    @staticmethod
+    def get_latest_articles(limit=10):
+        return Article.query.order_by(Article.created_at.desc()).limit(limit).all()
 
     @staticmethod
     def create_article(title, content, author='Anonymous'):
