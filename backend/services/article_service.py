@@ -1,12 +1,14 @@
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from app import db
 from app import Article
 
-def list_articles(query: Optional[str] = None) -> List[Article]:
+def list_articles(query: Optional[str] = None, page: int = 1, per_page: int = 10) -> Tuple[List[Article], int]:
     q = Article.query
     if query:
         q = q.filter(Article.title.contains(query) | Article.content.contains(query))
-    return q.order_by(Article.created_at.desc()).all()
+    total = q.count()
+    items = q.order_by(Article.created_at.desc()).offset((page-1)*per_page).limit(per_page).all()
+    return items, total
 
 def get_article(article_id: int) -> Optional[Article]:
     return Article.query.get(article_id)
