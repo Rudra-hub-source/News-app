@@ -1,7 +1,19 @@
+import sys
+import os
+
+# If a local virtualenv exists at ./venv, prefer its site-packages so
+# running `python app.py` (without activating the venv) can still import
+# installed dependencies.
+venv_dir = os.path.join(os.path.dirname(__file__), 'venv')
+if os.path.isdir(venv_dir):
+    pyver = f"python{sys.version_info.major}.{sys.version_info.minor}"
+    site_packages = os.path.join(venv_dir, 'lib', pyver, 'site-packages')
+    if os.path.isdir(site_packages) and site_packages not in sys.path:
+        sys.path.insert(0, site_packages)
+
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
-import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
