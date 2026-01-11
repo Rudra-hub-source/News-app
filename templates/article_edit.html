@@ -2,30 +2,81 @@
 
 {% block content %}
 <div class="min-h-screen py-12">
-  <div class="container mx-auto px-4 py-12 max-w-2xl">
-    <div class="bg-gray-800 rounded-xl p-8 border border-gray-700">
-      <h1 class="text-3xl font-bold text-white mb-6">Edit Article</h1>
-      <form method="POST">
-        <div class="mb-6">
-          <label class="block text-white mb-2">Title</label>
-          <input type="text" name="title" value="{{ article.title }}" required 
-                 class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white">
+  <div class="container mx-auto px-4 py-12 max-w-4xl">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      
+      <!-- Article Edit Form -->
+      <div class="lg:col-span-2">
+        <div class="bg-gray-800 rounded-xl p-8 border border-gray-700">
+          <h1 class="text-3xl font-bold text-white mb-6">Edit Article</h1>
+          <form method="POST">
+            <div class="mb-6">
+              <label class="block text-white mb-2">Title</label>
+              <input type="text" name="title" value="{{ article.title }}" required 
+                     class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white">
+            </div>
+            <div class="mb-6">
+              <label class="block text-white mb-2">Author</label>
+              <input type="text" name="author" value="{{ article.author }}"
+                     class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white">
+            </div>
+            <div class="mb-6">
+              <label class="block text-white mb-2">Content</label>
+              <textarea name="content" rows="10" required
+                        class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white">{{ article.content }}</textarea>
+            </div>
+            <div class="flex space-x-4">
+              <button type="submit" class="px-6 py-3 bg-yellow-600 text-white rounded-xl">Update Article</button>
+              <a href="/articles/{{ article.id }}" class="px-6 py-3 bg-gray-600 text-white rounded-xl">Cancel</a>
+            </div>
+          </form>
         </div>
-        <div class="mb-6">
-          <label class="block text-white mb-2">Author</label>
-          <input type="text" name="author" value="{{ article.author }}"
-                 class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white">
+      </div>
+      
+      <!-- Image Management -->
+      <div class="lg:col-span-1">
+        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
+          <h2 class="text-xl font-bold text-white mb-4">Article Images</h2>
+          
+          <!-- Upload Form -->
+          <form method="POST" action="/articles/upload-image/{{ article.id }}" enctype="multipart/form-data" class="mb-6">
+            <div class="mb-4">
+              <label class="block text-white mb-2 text-sm">Upload Image</label>
+              <input type="file" name="file" accept="image/*" required 
+                     class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm">
+            </div>
+            <button type="submit" class="w-full px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+              Upload Image
+            </button>
+          </form>
+          
+          <!-- Existing Images -->
+          {% if article_images %}
+          <div class="space-y-4">
+            <h3 class="text-white font-semibold">Current Images</h3>
+            {% for image in article_images %}
+            <div class="bg-gray-700 rounded-lg p-3">
+              <img src="/media/files/{{ image.filename }}" alt="{{ image.alt_text or image.original_filename }}" 
+                   class="w-full h-24 object-cover rounded mb-2"
+                   onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiBmaWxsPSIjMzc0MTUxIi8+Cjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzlDOUM5NyIgZm9udC1zaXplPSIxMiI+SW1hZ2U8L3RleHQ+Cjwvc3ZnPg=='">
+              <p class="text-gray-300 text-xs truncate">{{ image.original_filename }}</p>
+              <p class="text-gray-400 text-xs">{{ image.created_at.strftime('%b %d') if image.created_at else '' }}</p>
+              <form method="POST" action="/media/delete/{{ image.id }}" class="mt-2">
+                <button type="submit" class="w-full px-2 py-1 bg-red-600 text-white rounded text-xs hover:bg-red-700">
+                  Delete
+                </button>
+              </form>
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-center py-8">
+            <p class="text-gray-400 text-sm">No images uploaded yet</p>
+          </div>
+          {% endif %}
         </div>
-        <div class="mb-6">
-          <label class="block text-white mb-2">Content</label>
-          <textarea name="content" rows="10" required
-                    class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white">{{ article.content }}</textarea>
-        </div>
-        <div class="flex space-x-4">
-          <button type="submit" class="px-6 py-3 bg-yellow-600 text-white rounded-xl">Update Article</button>
-          <a href="/articles/{{ article.id }}" class="px-6 py-3 bg-gray-600 text-white rounded-xl">Cancel</a>
-        </div>
-      </form>
+      </div>
+      
     </div>
   </div>
 </div>

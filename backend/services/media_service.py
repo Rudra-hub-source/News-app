@@ -13,7 +13,7 @@ class MediaService:
         return '.' in filename and filename.rsplit('.', 1)[1].lower() in MediaService.ALLOWED_EXTENSIONS
     
     @staticmethod
-    def upload_image(file):
+    def upload_image(file, article_id=None):
         if not file or not MediaService.allowed_file(file.filename):
             return None
         
@@ -29,7 +29,8 @@ class MediaService:
             original_filename=original_filename,
             file_path=file_path,
             file_size=os.path.getsize(file_path),
-            mime_type=file.mimetype
+            mime_type=file.mimetype,
+            article_id=article_id
         )
         db.session.add(media)
         db.session.commit()

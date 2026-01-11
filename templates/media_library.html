@@ -22,20 +22,44 @@
     </div>
 
     {% if media_files %}
-    <div class="grid gap-6 md:grid-cols-3 lg:grid-cols-4">
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
       {% for media in media_files %}
-        <div class="bg-gray-800 rounded-xl p-4 border border-gray-700">
+        <div class="bg-gray-800 rounded-xl p-6 border border-gray-700">
           <div class="aspect-square mb-4 overflow-hidden rounded-lg">
             <img src="/media/files/{{ media.filename }}" alt="{{ media.alt_text or media.original_filename }}" 
                  class="w-full h-full object-cover">
           </div>
-          <h3 class="text-white font-semibold mb-2 truncate">{{ media.original_filename }}</h3>
-          <p class="text-gray-400 text-sm mb-4">{{ media.file_size // 1024 }} KB</p>
-          <div class="flex space-x-2">
-            <a href="/media/{{ media.id }}" class="px-3 py-1 bg-blue-600 text-white rounded text-sm">View</a>
-            <a href="/media/edit/{{ media.id }}" class="px-3 py-1 bg-yellow-600 text-white rounded text-sm">Edit</a>
-            <form method="POST" action="/media/delete/{{ media.id }}" class="inline">
-              <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Delete</button>
+          <div class="space-y-3">
+            <h3 class="text-white font-semibold truncate">{{ media.original_filename }}</h3>
+            <div class="text-gray-400 text-sm space-y-1">
+              <p><strong>Size:</strong> {{ (media.file_size // 1024) if media.file_size else 0 }} KB</p>
+              <p><strong>Type:</strong> {{ media.mime_type or 'Unknown' }}</p>
+              <p><strong>Uploaded:</strong> {{ media.created_at.strftime('%b %d, %Y') if media.created_at else 'Unknown' }}</p>
+              {% if media.article_id %}
+              <p><strong>Article:</strong> <a href="/articles/{{ media.article_id }}" class="text-orange-400 hover:text-orange-300">View Article</a></p>
+              {% else %}
+              <p><strong>Article:</strong> General Media</p>
+              {% endif %}
+              {% if media.alt_text %}
+              <p><strong>Alt Text:</strong> {{ media.alt_text }}</p>
+              {% endif %}
+              {% if media.description %}
+              <p><strong>Description:</strong> {{ media.description }}</p>
+              {% endif %}
+            </div>
+            
+            <!-- Edit Form -->
+            <form method="POST" action="/media/edit/{{ media.id }}" class="space-y-3 mt-4">
+              <input type="text" name="alt_text" placeholder="Alt text" value="{{ media.alt_text or '' }}"
+                     class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm">
+              <textarea name="description" placeholder="Description" rows="2"
+                        class="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded text-white text-sm">{{ media.description or '' }}</textarea>
+              <button type="submit" class="w-full px-3 py-2 bg-green-600 text-white rounded text-sm">Update</button>
+            </form>
+            
+            <!-- Delete Form -->
+            <form method="POST" action="/media/delete/{{ media.id }}" class="mt-2">
+              <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded text-sm w-full">Delete</button>
             </form>
           </div>
         </div>

@@ -19,7 +19,9 @@ def test():
 @bp.route('/<int:article_id>')
 def detail(article_id):
     article = ArticleService.get_article(article_id)
-    return render_template('article_detail.html', article=article)
+    from backend.models.media import Media
+    article_images = Media.query.filter_by(article_id=article_id).all()
+    return render_template('article_detail.html', article=article, article_images=article_images)
 
 @bp.route('/create', methods=['GET', 'POST'])
 def create():
@@ -54,7 +56,10 @@ def edit(article_id):
         ArticleService.update_article(article_id, title, content, author)
         flash('Article updated successfully!', 'success')
         return redirect(url_for('main.articles.detail', article_id=article_id))
-    return render_template('article_edit.html', article=article)
+    
+    from backend.models.media import Media
+    article_images = Media.query.filter_by(article_id=article_id).all()
+    return render_template('article_edit.html', article=article, article_images=article_images)
 
 @bp.route('/delete/<int:article_id>', methods=['POST'])
 def delete(article_id):
@@ -78,3 +83,47 @@ def trending():
 def latest():
     articles = ArticleService.get_latest_articles()
     return render_template('latest_articles.html', articles=articles)
+
+@bp.route('/upload-image/<int:article_id>', methods=['POST'])
+def upload_image(article_id):
+    if 'file' not in request.files:
+        flash('No file selected', 'error')
+        return redirect(url_for('main.articles.edit', article_id=article_id))
+    
+    file = request.files['file']
+    if file.filename == '':
+        flash('No file selected', 'error')
+        return redirect(url_for('main.articles.edit', article_id=article_id))
+    
+    try:
+        import os
+        import uuid
+        from werkzeug.utils import secure_filename
+        from backend.models.media import Media
+        from backend.state import db
+        
+        # Simple upload logic
+        original_filename = secure_filename(file.filename)
+        filename = f"{uuid.uuid4()}_{original_filename}"
+        upload_folder = 'instance/uploads'
+        file_path = os.path.join(upload_folder, filename)
+        
+        os.makedirs(upload_folder, exist_ok=True)
+        file.save(file_path)
+        
+        media = Media(
+            filename=filename,
+            original_filename=original_filename,
+            file_path=file_path,
+            file_size=os.path.getsize(file_path),
+            mime_type=file.mimetype,
+            article_id=article_id
+        )
+        db.session.add(media)
+        db.session.commit()
+        
+        flash('Image uploaded successfully!', 'success')
+    except Exception as e:
+        flash(f'Error uploading image: {str(e)}', 'error')
+    
+    return redirect(url_for('main.articles.edit', article_id=article_id))

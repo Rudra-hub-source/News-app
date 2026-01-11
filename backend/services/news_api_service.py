@@ -39,3 +39,44 @@ class NewsAPIService:
         response = requests.get(f'{NewsAPIService.BASE_URL}/sources', params=params)
         response.raise_for_status()
         return response.json()
+    
+    @staticmethod
+    def get_indian_news(category=None, page_size=20):
+        try:
+            from datetime import datetime, timedelta
+            
+            # Get date for last 24 hours
+            yesterday = (datetime.now() - timedelta(days=1)).strftime('%Y-%m-%d')
+            
+            # Search from major Indian news sources with date filter
+            indian_sources = 'the-times-of-india,the-hindu'
+            params = {
+                'apiKey': NewsAPIService.API_KEY,
+                'sources': indian_sources,
+                'from': yesterday,
+                'sortBy': 'publishedAt',
+                'pageSize': page_size
+            }
+            
+            response = requests.get(f'{NewsAPIService.BASE_URL}/everything', params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            # If no articles from sources, search for India-related news from Indian publishers
+            if not data.get('articles'):
+                params = {
+                    'apiKey': NewsAPIService.API_KEY,
+                    'q': 'India OR Indian OR Delhi OR Mumbai OR Modi OR BJP OR Congress',
+                    'domains': 'timesofindia.indiatimes.com,thehindu.com,indianexpress.com,hindustantimes.com',
+                    'from': yesterday,
+                    'pageSize': page_size,
+                    'sortBy': 'publishedAt'
+                }
+                response = requests.get(f'{NewsAPIService.BASE_URL}/everything', params=params)
+                response.raise_for_status()
+                data = response.json()
+            
+            return data
+        except:
+            # Final fallback to general India search
+            return NewsAPIService.get_everything('India', page_size)

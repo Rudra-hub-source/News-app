@@ -6,10 +6,18 @@
     <!-- Header -->
     <div class="text-center mb-12">
       <h1 class="text-5xl font-bold bg-gradient-to-r from-red-400 via-orange-500 to-yellow-500 bg-clip-text text-transparent mb-4 metallic-text">
-        {{ category.title() }} News
+        {% if category == 'india' %}
+          Indian News
+        {% else %}
+          {{ category.title() }} News
+        {% endif %}
       </h1>
       <p class="text-xl text-gray-300 max-w-2xl mx-auto mb-8">
-        Latest {{ category }} news and updates from trusted sources worldwide.
+        {% if category == 'india' %}
+          Latest news and updates from India.
+        {% else %}
+          Latest {{ category }} news and updates from trusted sources worldwide.
+        {% endif %}
       </p>
       <a href="/" class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-gray-700 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-500 transition duration-300 metallic-button">
         <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">

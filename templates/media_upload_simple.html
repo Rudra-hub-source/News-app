@@ -5,6 +5,8 @@
   <div class="container mx-auto px-4 py-12 max-w-2xl">
     <div class="bg-gray-800 rounded-xl p-8 border border-gray-700">
       <h1 class="text-3xl font-bold text-white mb-6">Upload Image</h1>
+      <p class="text-gray-400 mb-8">Add images to your media library</p>
+      
       <form method="POST" enctype="multipart/form-data">
         <div class="mb-6">
           <label class="block text-white mb-2">Select Article (Optional)</label>
@@ -14,17 +16,22 @@
             <option value="{{ article.id }}">{{ article.title }}</option>
             {% endfor %}
           </select>
-          <p class="text-gray-400 text-sm mt-2">Link this image to a specific article or leave as general media</p>
         </div>
+        
         <div class="mb-6">
           <label class="block text-white mb-2">Select Image</label>
           <input type="file" name="file" accept="image/*" required 
                  class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-xl text-white">
-          <p class="text-gray-400 text-sm mt-2">Supported formats: PNG, JPG, JPEG, GIF, WEBP</p>
+          <p class="text-gray-400 text-sm mt-2">Supported: PNG, JPG, JPEG, GIF, WEBP</p>
         </div>
+        
         <div class="flex space-x-4">
-          <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-xl">Upload Image</button>
-          <a href="/media" class="px-6 py-3 bg-gray-600 text-white rounded-xl">Cancel</a>
+          <button type="submit" class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700">
+            Upload Image
+          </button>
+          <a href="/media" class="px-6 py-3 bg-gray-600 text-white rounded-xl hover:bg-gray-700">
+            Cancel
+          </a>
         </div>
       </form>
     </div>

@@ -22,7 +22,10 @@ def index():
 @bp.route('/category/<category>')
 def category_news(category):
     try:
-        news_data = NewsAPIService.get_top_headlines(category=category)
+        if category == 'india':
+            news_data = NewsAPIService.get_indian_news()
+        else:
+            news_data = NewsAPIService.get_top_headlines(category=category)
         articles = news_data.get('articles', [])
         return render_template('category.html', articles=articles, category=category)
     except Exception as e:

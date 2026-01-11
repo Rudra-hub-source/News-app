@@ -15,5 +15,5 @@ db.init_app(app)
 app.register_blueprint(main_bp)
 
 if __name__ == '__main__':
-    # Run on standard HTTP port 80 - no port needed in URLs
-    app.run(host='0.0.0.0', port=80, debug=True)
+    # Run on development port
+    app.run(host='0.0.0.0', port=5000, debug=True)
