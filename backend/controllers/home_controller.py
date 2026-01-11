@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request
+from flask import Blueprint, render_template, request, jsonify
 from backend.services.news_api_service import NewsAPIService
 
 bp = Blueprint('home', __name__)
@@ -30,3 +30,15 @@ def category_news(category):
         return render_template('category.html', articles=articles, category=category)
     except Exception as e:
         return render_template('category.html', articles=[], category=category, error=str(e))
+
+@bp.route('/api/refresh/<category>')
+def refresh_news(category):
+    try:
+        if category == 'india':
+            news_data = NewsAPIService.get_indian_news()
+        else:
+            news_data = NewsAPIService.get_top_headlines(category=category)
+        articles = news_data.get('articles', [])
+        return jsonify({'success': True, 'articles': articles})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)})

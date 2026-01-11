@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template, request
 import os
 from backend.state import db
 from backend.router import main_bp
@@ -12,7 +12,32 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey')
 
 db.init_app(app)
 
+with app.app_context():
+    db.create_all()
+
 app.register_blueprint(main_bp)
+
+@app.route('/articles')
+def articles_redirect():
+    from backend.services.article_service import ArticleService
+    q = request.args.get('q', '')
+    articles = ArticleService.get_articles(q)
+    return render_template('articles.html', articles=articles, q=q)
+
+@app.route('/initdb')
+def init_db():
+    db.create_all()
+    # Create a test article if none exist
+    from backend.services.article_service import ArticleService
+    if len(ArticleService.get_articles()) == 0:
+        ArticleService.create_article('Test Article', 'This is a test article content.', 'Test Author')
+    return 'Database initialized with test data!'
+
+@app.route('/debug')
+def debug():
+    from backend.services.article_service import ArticleService
+    articles = ArticleService.get_articles()
+    return f'Found {len(articles)} articles in database'
 
 if __name__ == '__main__':
     # Run on development port
