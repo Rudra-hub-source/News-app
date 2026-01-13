@@ -1,0 +1,2 @@
+// Reusable JavaScript components
+class ArticleCard {\n    constructor(article) {\n        this.article = article;\n    }\n\n    render() {\n        return `\n            <div class=\"article-card\">\n                <h3>${this.article.title}</h3>\n                <p>${this.article.content.substring(0, 100)}...</p>\n                <span>By ${this.article.author}</span>\n            </div>\n        `;\n    }\n}\n\n// Export for use in other files\nif (typeof module !== 'undefined' && module.exports) {\n    module.exports = { ArticleCard };\n}

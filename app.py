@@ -1,12 +1,19 @@
 from flask import Flask, render_template, request
 import os
+from pathlib import Path
 from backend.state import db
 from backend.router import main_bp
 from backend.models.article import Article
 from backend.models.media import Media
 
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///news.db'
+# Get the absolute path to the database
+BASE_DIR = Path(__file__).parent
+DATABASE_PATH = BASE_DIR / 'database' / 'instance' / 'news.db'
+
+app = Flask(__name__, 
+           template_folder='frontend/templates',
+           static_folder='frontend/static')
+app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey')
 
