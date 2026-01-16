@@ -10,6 +10,9 @@ from backend.models.media import Media
 BASE_DIR = Path(__file__).parent
 DATABASE_PATH = BASE_DIR / 'database' / 'instance' / 'news.db'
 
+# Create database directory if it doesn't exist
+os.makedirs(DATABASE_PATH.parent, exist_ok=True)
+
 app = Flask(__name__, 
            template_folder='frontend/templates',
            static_folder='frontend/static')
