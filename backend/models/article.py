@@ -13,4 +13,6 @@ class Article(db.Model):
     content = db.Column(db.Text, nullable=False)
     author = db.Column(db.String(100), default='Anonymous')
     view_count = db.Column(db.Integer, default=0)
+    likes = db.Column(db.Integer, default=0)
+    bookmarks = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=get_ist_time)

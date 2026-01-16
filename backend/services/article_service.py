@@ -49,3 +49,18 @@ class ArticleService:
         a = Article.query.get_or_404(article_id)
         db.session.delete(a)
         db.session.commit()
+    
+    @staticmethod
+    def get_articles_paginated(q='', page=1, per_page=9):
+        query = Article.query
+        if q:
+            query = query.filter(
+                Article.title.contains(q) | Article.content.contains(q)
+            )
+        query = query.order_by(Article.created_at.desc())
+        
+        total = query.count()
+        articles = query.limit(per_page).offset((page - 1) * per_page).all()
+        has_more = total > (page * per_page)
+        
+        return articles, total, has_more

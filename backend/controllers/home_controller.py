@@ -42,3 +42,35 @@ def refresh_news(category):
         return jsonify({'success': True, 'articles': articles})
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)})
+
+@bp.route('/api/category/<category>/load-more')
+def load_more_category_news(category):
+    try:
+        page = request.args.get('page', 1, type=int)
+        
+        if category == 'india':
+            news_data = NewsAPIService.get_indian_news(page_size=20)
+        else:
+            news_data = NewsAPIService.get_top_headlines(category=category, page=page)
+        
+        articles = news_data.get('articles', [])
+        return jsonify({'success': True, 'articles': articles})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e), 'articles': []})
+
+@bp.route('/api/news/load-more')
+def load_more_news():
+    try:
+        page = request.args.get('page', 1, type=int)
+        category = request.args.get('category', '')
+        q = request.args.get('q', '')
+        
+        if q:
+            news_data = NewsAPIService.get_everything(q, page=page)
+        else:
+            news_data = NewsAPIService.get_top_headlines(category=category if category else None, page=page)
+        
+        articles = news_data.get('articles', [])
+        return jsonify({'success': True, 'articles': articles})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e), 'articles': []})

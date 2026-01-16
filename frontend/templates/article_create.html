@@ -1,61 +1,61 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 py-12">
+<div class="min-h-screen bg-white dark:bg-gradient-to-br dark:from-gray-900 dark:via-black dark:to-gray-800 py-12 transition-colors duration-300">
   <div class="container mx-auto px-4 py-12 max-w-4xl">
     <!-- Header Section -->
     <div class="text-center mb-12">
       <h1 class="text-5xl font-bold bg-gradient-to-r from-orange-400 via-red-500 to-pink-500 bg-clip-text text-transparent mb-4 metallic-text">
         Create New Article
       </h1>
-      <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+      <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
         Share your thoughts and stories with the world. Create engaging articles that inspire and inform.
       </p>
     </div>
 
     <!-- Article Form -->
-    <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8 border border-orange-500/20 shadow-2xl metallic-card">
+    <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-orange-500/20 shadow-xl dark:shadow-2xl metallic-card">
       <div class="flex items-center mb-6">
         <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center mr-4">
           <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path>
           </svg>
         </div>
-        <h2 class="text-2xl font-bold text-white">Article Details</h2>
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Article Details</h2>
       </div>
       
       <form method="POST" class="space-y-6">
         <div class="group">
-          <label class="block text-white font-semibold mb-3 flex items-center">
+          <label class="block text-gray-900 dark:text-white font-semibold mb-3 flex items-center">
             <svg class="w-5 h-5 mr-2 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
             </svg>
             Article Title
           </label>
           <input type="text" name="title" required placeholder="Enter an engaging title..."
-                 class="w-full px-6 py-4 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300 group-hover:border-orange-500/50">
+                 class="w-full px-6 py-4 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300 group-hover:border-orange-500/50">
         </div>
         
         <div class="group">
-          <label class="block text-white font-semibold mb-3 flex items-center">
+          <label class="block text-gray-900 dark:text-white font-semibold mb-3 flex items-center">
             <svg class="w-5 h-5 mr-2 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
             </svg>
             Author Name
           </label>
           <input type="text" name="author" placeholder="Your name (optional)"
-                 class="w-full px-6 py-4 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300 group-hover:border-orange-500/50">
+                 class="w-full px-6 py-4 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300 group-hover:border-orange-500/50">
         </div>
         
         <div class="group">
-          <label class="block text-white font-semibold mb-3 flex items-center">
+          <label class="block text-gray-900 dark:text-white font-semibold mb-3 flex items-center">
             <svg class="w-5 h-5 mr-2 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
               <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
             </svg>
             Article Content
           </label>
           <textarea name="content" rows="12" required placeholder="Write your article content here..."
-                    class="w-full px-6 py-4 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300 group-hover:border-orange-500/50 resize-none"></textarea>
+                    class="w-full px-6 py-4 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300 group-hover:border-orange-500/50 resize-none"></textarea>
         </div>
         
         <div class="flex flex-wrap gap-4 pt-4">
@@ -89,13 +89,13 @@
         <h2 class="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-4 metallic-text">
           All Articles
         </h2>
-        <p class="text-gray-300">Manage and view all your published articles</p>
+        <p class="text-gray-600 dark:text-gray-300">Manage and view all your published articles</p>
       </div>
       
       {% if articles %}
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {% for article in articles %}
-            <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-gray-700 hover:border-orange-500/50 transition duration-300 metallic-card group">
+            <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-700 hover:border-orange-500/50 transition duration-300 metallic-card group">
               <div class="flex items-start justify-between mb-4">
                 <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
                   <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -107,11 +107,11 @@
                 </div>
               </div>
               
-              <h3 class="text-xl font-bold text-white mb-3 group-hover:text-orange-400 transition duration-300 line-clamp-2">{{ article.title }}</h3>
-              <p class="text-gray-400 mb-4 line-clamp-3">{{ article.content[:120] }}...</p>
+              <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-orange-400 transition duration-300 line-clamp-2">{{ article.title }}</h3>
+              <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">{{ article.content[:120] }}...</p>
               
               <div class="flex items-center justify-between">
-                <span class="text-sm text-gray-500 flex items-center">
+                <span class="text-sm text-gray-500 dark:text-gray-500 flex items-center">
                   <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                   </svg>
@@ -136,8 +136,8 @@
               <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
             </svg>
           </div>
-          <h3 class="text-2xl font-bold text-gray-300 mb-2">No Articles Yet</h3>
-          <p class="text-gray-500 mb-6">Create your first article to get started!</p>
+          <h3 class="text-2xl font-bold text-gray-900 dark:text-gray-300 mb-2">No Articles Yet</h3>
+          <p class="text-gray-600 dark:text-gray-500 mb-6">Create your first article to get started!</p>
           <button onclick="toggleArticles()" class="px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl hover:from-orange-600 hover:to-red-600 transition duration-300">
             Hide This Section
           </button>

@@ -7,8 +7,11 @@ bp = Blueprint('articles', __name__)
 def index():
     try:
         q = request.args.get('q', '')
-        articles = ArticleService.get_articles(q)
-        return render_template('articles.html', articles=articles, q=q)
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 9, type=int)
+        
+        articles, total, has_more = ArticleService.get_articles_paginated(q, page, per_page)
+        return render_template('articles.html', articles=articles, q=q, page=page, total=total, has_more=has_more)
     except Exception as e:
         return f'Articles page error: {str(e)}', 500
 
@@ -73,6 +76,55 @@ def init_db():
     db.create_all()
     flash('Database initialized!', 'success')
     return redirect(url_for('main.articles.index'))
+
+@bp.route('/like/<int:article_id>', methods=['POST'])
+def like(article_id):
+    try:
+        article = ArticleService.get_article(article_id)
+        article.likes += 1
+        from backend.state import db
+        db.session.commit()
+        return jsonify({'success': True, 'likes': article.likes})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@bp.route('/bookmark/<int:article_id>', methods=['POST'])
+def bookmark(article_id):
+    try:
+        article = ArticleService.get_article(article_id)
+        article.bookmarks += 1
+        from backend.state import db
+        db.session.commit()
+        return jsonify({'success': True, 'bookmarks': article.bookmarks})
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
+
+@bp.route('/api/articles')
+def api_articles():
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 9, type=int)
+        q = request.args.get('q', '')
+        
+        articles, total, has_more = ArticleService.get_articles_paginated(q, page, per_page)
+        
+        return jsonify({
+            'success': True,
+            'articles': [{
+                'id': a.id,
+                'title': a.title,
+                'content': a.content[:150] + '...' if len(a.content) > 150 else a.content,
+                'author': a.author or 'Anonymous',
+                'likes': a.likes,
+                'bookmarks': a.bookmarks,
+                'created_at': a.created_at.strftime('%b %d') if a.created_at else 'Recent'
+            } for a in articles],
+            'page': page,
+            'total': total,
+            'has_more': has_more
+        })
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 400
 
 @bp.route('/trending')
 def trending():

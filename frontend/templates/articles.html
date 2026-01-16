@@ -1,20 +1,20 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 py-12">
+<div class="min-h-screen bg-gradient-to-br from-gray-100 via-white to-gray-200 dark:from-gray-900 dark:via-black dark:to-gray-800 py-12 transition-colors duration-300">
   <div class="container mx-auto px-4 py-12">
     <!-- Header Section -->
-    <div class="text-center mb-12">
-      <h1 class="text-5xl font-bold text-orange-500 mb-4">
+    <div class="text-center mb-12 animate-fadeIn">
+      <h1 class="text-5xl font-bold text-orange-500 mb-4 animate-pulse-slow">
         All Articles
       </h1>
-      <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+      <p class="text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
         Manage your published articles, track performance, and create new content.
       </p>
     </div>
 
     <!-- Search and Actions Bar -->
-    <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-orange-500/20 shadow-2xl mb-8 metallic-card">
+    <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-orange-500/20 shadow-2xl mb-8 metallic-card">
       <div class="flex flex-col lg:flex-row items-center justify-between gap-4">
         <form method="GET" class="flex items-center space-x-4 flex-1">
           <div class="relative flex-1 max-w-md">
@@ -24,7 +24,7 @@
               </svg>
             </div>
             <input name="q" value="{{ q }}" placeholder="Search your articles..." 
-                   class="w-full pl-12 pr-4 py-4 bg-gray-700/50 border border-gray-600 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300">
+                   class="w-full pl-12 pr-4 py-4 bg-gray-100 dark:bg-gray-700/50 border border-gray-300 dark:border-gray-600 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition duration-300">
           </div>
           <button type="submit" class="inline-flex items-center px-6 py-4 bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold rounded-xl hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition duration-300 shadow-lg">
             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -44,9 +44,9 @@
 
     {% if articles %}
     <!-- Articles Grid -->
-    <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+    <div id="articlesGrid" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
       {% for article in articles %}
-        <div class="group bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-6 border border-orange-500/20 shadow-2xl hover:shadow-orange-500/10 transform hover:scale-105 transition duration-300 metallic-card">
+        <div class="article-card group bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-orange-500/20 shadow-xl hover:shadow-2xl dark:hover:shadow-orange-500/10 transform hover:scale-105 transition duration-300 metallic-card scroll-animate" data-article-id="{{ article.id }}">
           <!-- Article Header -->
           <div class="flex items-start justify-between mb-4">
             <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -61,22 +61,22 @@
           </div>
           
           <!-- Article Content -->
-          <h2 class="text-xl font-bold text-white mb-3 group-hover:text-orange-400 transition duration-300 line-clamp-2">
+          <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-orange-400 transition duration-300 line-clamp-2">
             {{ article.title }}
           </h2>
-          <p class="text-gray-400 mb-4 line-clamp-3 leading-relaxed">
+          <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3 leading-relaxed">
             {{ article.content[:150] }}{% if article.content|length > 150 %}...{% endif %}
           </p>
           
           <!-- Article Meta -->
-          <div class="flex items-center justify-between mb-6">
+          <div class="flex items-center justify-between mb-4">
             <div class="flex items-center space-x-2">
               <div class="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
                 <svg class="w-4 h-4 text-white" fill="currentColor" viewBox="0 0 20 20">
                   <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                 </svg>
               </div>
-              <span class="text-sm text-gray-400 font-medium">{{ article.author or 'Anonymous' }}</span>
+              <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">{{ article.author or 'Anonymous' }}</span>
             </div>
             <div class="flex items-center space-x-1 text-gray-500">
               <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -84,6 +84,22 @@
               </svg>
               <span class="text-xs">{{ article.created_at.strftime('%b %d') if article.created_at else 'Recent' }}</span>
             </div>
+          </div>
+
+          <!-- Like & Bookmark -->
+          <div class="flex items-center space-x-4 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+            <button onclick="likeArticle({{ article.id }})" class="like-btn flex items-center space-x-1 text-gray-600 dark:text-gray-400 hover:text-red-500 transition duration-300">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+              </svg>
+              <span class="like-count text-sm font-medium">{{ article.likes or 0 }}</span>
+            </button>
+            <button onclick="bookmarkArticle({{ article.id }})" class="bookmark-btn flex items-center space-x-1 text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition duration-300">
+              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path>
+              </svg>
+              <span class="bookmark-count text-sm font-medium">{{ article.bookmarks or 0 }}</span>
+            </button>
           </div>
           
           <!-- Action Buttons -->
@@ -114,17 +130,33 @@
         </div>
       {% endfor %}
     </div>
+
+    <!-- Load More Button -->
+    {% if has_more %}
+    <div class="text-center mt-12">
+      <button id="loadMoreBtn" class="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-500 to-indigo-600 text-white font-semibold rounded-xl hover:from-purple-600 hover:to-indigo-700 transform hover:scale-105 transition duration-300 shadow-lg">
+        <svg class="w-5 h-5 mr-2 animate-bounce" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+        </svg>
+        Load More Articles
+      </button>
+      <div id="loadingSpinner" class="hidden mt-4">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
+      </div>
+    </div>
+    {% endif %}
+
     {% else %}
     <!-- Empty State -->
     <div class="text-center py-16">
-      <div class="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-12 border border-orange-500/20 shadow-2xl max-w-md mx-auto metallic-card">
+      <div class="bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-12 border border-gray-200 dark:border-orange-500/20 shadow-2xl max-w-md mx-auto metallic-card">
         <div class="w-20 h-20 bg-gradient-to-r from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
           <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 20 20">
             <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
           </svg>
         </div>
-        <h3 class="text-2xl font-bold text-white mb-4">No Articles Found</h3>
-        <p class="text-gray-400 mb-6 leading-relaxed">
+        <h3 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">No Articles Found</h3>
+        <p class="text-gray-600 dark:text-gray-400 mb-6 leading-relaxed">
           {% if q %}
             No articles match your search criteria. Try different keywords.
           {% else %}
@@ -152,14 +184,174 @@
   </div>
 </div>
 
+<script>
+let currentPage = {{ page }};
+const searchQuery = "{{ q }}";
+
+// Load More Functionality
+const loadMoreBtn = document.getElementById('loadMoreBtn');
+const loadingSpinner = document.getElementById('loadingSpinner');
+const articlesGrid = document.getElementById('articlesGrid');
+
+if (loadMoreBtn) {
+  loadMoreBtn.addEventListener('click', async () => {
+    loadMoreBtn.classList.add('hidden');
+    loadingSpinner.classList.remove('hidden');
+    
+    currentPage++;
+    
+    try {
+      const response = await fetch(`/articles/api/articles?page=${currentPage}&q=${searchQuery}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        data.articles.forEach(article => {
+          const articleCard = createArticleCard(article);
+          articlesGrid.insertAdjacentHTML('beforeend', articleCard);
+        });
+        
+        // Animate new cards
+        setTimeout(() => {
+          document.querySelectorAll('.article-card').forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+              card.style.transition = 'all 0.5s ease';
+              card.style.opacity = '1';
+              card.style.transform = 'translateY(0)';
+            }, index * 50);
+          });
+        }, 100);
+        
+        if (!data.has_more) {
+          loadMoreBtn.remove();
+        } else {
+          loadMoreBtn.classList.remove('hidden');
+        }
+      }
+    } catch (error) {
+      console.error('Error loading articles:', error);
+      alert('Failed to load more articles');
+      loadMoreBtn.classList.remove('hidden');
+    }
+    
+    loadingSpinner.classList.add('hidden');
+  });
+}
+
+function createArticleCard(article) {
+  return `
+    <div class="article-card group bg-white dark:bg-gradient-to-br dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-orange-500/20 shadow-xl hover:shadow-2xl dark:hover:shadow-orange-500/10 transform hover:scale-105 transition duration-300" data-article-id="${article.id}">
+      <div class="flex items-start justify-between mb-4">
+        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
+          <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clip-rule="evenodd"></path>
+          </svg>
+        </div>
+      </div>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-orange-400 transition duration-300 line-clamp-2">${article.title}</h2>
+      <p class="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3 leading-relaxed">${article.content}</p>
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-sm text-gray-600 dark:text-gray-400 font-medium">${article.author}</span>
+        <span class="text-xs text-gray-500">${article.created_at}</span>
+      </div>
+      <div class="flex items-center space-x-4 mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
+        <button onclick="likeArticle(${article.id})" class="like-btn flex items-center space-x-1 text-gray-600 dark:text-gray-400 hover:text-red-500 transition duration-300">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
+          </svg>
+          <span class="like-count text-sm font-medium">${article.likes}</span>
+        </button>
+        <button onclick="bookmarkArticle(${article.id})" class="bookmark-btn flex items-center space-x-1 text-gray-600 dark:text-gray-400 hover:text-yellow-500 transition duration-300">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v14l-5-2.5L5 18V4z"></path>
+          </svg>
+          <span class="bookmark-count text-sm font-medium">${article.bookmarks}</span>
+        </button>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <a href="/articles/${article.id}" class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-lg hover:from-blue-600 hover:to-blue-700 transform hover:scale-105 transition duration-300">View</a>
+        <a href="/articles/edit/${article.id}" class="flex-1 inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-sm font-medium rounded-lg hover:from-yellow-600 hover:to-orange-600 transform hover:scale-105 transition duration-300">Edit</a>
+      </div>
+    </div>
+  `;
+}
+
+// Like Article
+async function likeArticle(articleId) {
+  try {
+    const response = await fetch(`/articles/like/${articleId}`, { method: 'POST' });
+    const data = await response.json();
+    
+    if (data.success) {
+      const card = document.querySelector(`[data-article-id="${articleId}"]`);
+      const likeCount = card.querySelector('.like-count');
+      likeCount.textContent = data.likes;
+      
+      // Animation
+      const likeBtn = card.querySelector('.like-btn');
+      likeBtn.classList.add('text-red-500');
+      likeBtn.style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        likeBtn.style.transform = 'scale(1)';
+      }, 200);
+    }
+  } catch (error) {
+    console.error('Error liking article:', error);
+  }
+}
+
+// Bookmark Article
+async function bookmarkArticle(articleId) {
+  try {
+    const response = await fetch(`/articles/bookmark/${articleId}`, { method: 'POST' });
+    const data = await response.json();
+    
+    if (data.success) {
+      const card = document.querySelector(`[data-article-id="${articleId}"]`);
+      const bookmarkCount = card.querySelector('.bookmark-count');
+      bookmarkCount.textContent = data.bookmarks;
+      
+      // Animation
+      const bookmarkBtn = card.querySelector('.bookmark-btn');
+      bookmarkBtn.classList.add('text-yellow-500');
+      bookmarkBtn.style.transform = 'scale(1.2)';
+      setTimeout(() => {
+        bookmarkBtn.style.transform = 'scale(1)';
+      }, 200);
+    }
+  } catch (error) {
+    console.error('Error bookmarking article:', error);
+  }
+}
+
+// Smooth scroll animation on page load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.article-card').forEach((card, index) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+      card.style.transition = 'all 0.5s ease';
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, index * 100);
+  });
+});
+</script>
+
 <style>
 .metallic-card {
-  background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.9));
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(249, 250, 251, 0.9));
   backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.dark .metallic-card {
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.9));
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
-.metallic-card:hover {
+.dark .metallic-card:hover {
   box-shadow: 0 20px 40px rgba(251, 146, 60, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
