@@ -31,7 +31,8 @@ if 'postgresql' in get_database_uri():
         'pool_recycle': 300,
         'connect_args': {
             'connect_timeout': 10,
-            'application_name': 'news_app'
+            'application_name': 'news_app',
+            'sslmode': 'require'
         }
     }
 
