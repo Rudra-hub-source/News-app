@@ -1,10 +1,6 @@
 from flask import Flask, render_template, request
 import os
 from pathlib import Path
-from backend.state import db
-from backend.router import main_bp
-from backend.models.article import Article
-from backend.models.media import Media
 
 # Database configuration with fallback
 def get_database_uri():
@@ -27,6 +23,12 @@ app = Flask(__name__,
 app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey')
+
+# Import after app creation to avoid circular imports
+from backend.state import db
+from backend.router import main_bp
+from backend.models.article import Article
+from backend.models.media import Media
 
 db.init_app(app)
 
