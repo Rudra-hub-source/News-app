@@ -1,15 +1,17 @@
 # 📰 News Management App
 
-A modern, interactive news management system built with Flask and PostgreSQL, featuring a sleek dark theme with gradient animations and comprehensive CRUD operations.
+A modern, interactive news management system built with Flask featuring dual database support (SQLite for development, PostgreSQL for production), sleek dark theme with gradient animations and comprehensive CRUD operations.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)
+![SQLite](https://img.shields.io/badge/SQLite-3.0+-orange.svg)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-blue.svg)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0+-blue.svg)
 
 ## ✨ Features
 
 - 📝 **Full CRUD Operations** - Create, read, update, and delete articles
+- 🗄️ **Dual Database Support** - SQLite for development, PostgreSQL for production
 - 🎨 **Modern Interactive UI** - Gradient backgrounds, animations, and hover effects
 - 🖼️ **Image Management** - Upload and manage article images
 - 🔍 **Search Functionality** - Search articles by title and content
@@ -33,33 +35,37 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Set up PostgreSQL database:
+### 3. Run the application (uses SQLite by default):
+
+```bash
+python app.py
+```
+
+### 4. Open your browser:
+
+```
+http://127.0.0.1:5000
+```
+
+### 5. Initialize with sample data:
+
+```
+http://127.0.0.1:5000/initdb
+```
+
+## 🐘 PostgreSQL Setup (Optional for Local Development)
+
+### For PostgreSQL in development:
 
 ```bash
 # Install PostgreSQL and create database
 createdb news_app
 
-# Set environment variable (optional)
+# Set environment variable
 export DATABASE_URL="postgresql://postgres:password@localhost:5432/news_app"
-```
 
-### 4. Initialize the database:
-
-```bash
+# Run the application
 python app.py
-# Then visit http://127.0.0.1:5000/initdb
-```
-
-### 5. Run the application:
-
-```bash
-python app.py
-```
-
-### 6. Open your browser:
-
-```
-http://127.0.0.1:5000
 ```
 
 ## 📁 Project Structure
@@ -173,7 +179,7 @@ News-app/
 |--------|---------|------------|
 | `backend/` | 🐍 Server-side logic | Python + Flask |
 | `frontend/` | 🎨 User interface | HTML + CSS + JS |
-| `database/` | 🗃️ Data storage | SQLite + Migrations |
+| `database/` | 🗃️ Data storage | SQLite/PostgreSQL |
 | `config/` | ⚙️ App settings | Python configs |
 | `tests/` | 🧪 Quality assurance | PyTest |
 | `docs/` | 📚 Documentation | Markdown |
@@ -199,8 +205,10 @@ User Request → Frontend (Templates) → Backend (Controllers) → Services →
 - **SVG Icons** - Scalable vector graphics
 
 ### **Database**
-- **PostgreSQL** - Robust, scalable relational database
-- **IST Timezone** - Indian Standard Time support
+- **Development:** SQLite - Lightweight, serverless database for local development
+- **Production:** PostgreSQL - Robust, scalable relational database
+- **Auto-Detection:** Uses `DATABASE_URL` environment variable to switch
+- **IST Timezone:** Indian Standard Time support
 
 ## 🎨 UI Features
 
@@ -230,6 +238,31 @@ User Request → Frontend (Templates) → Backend (Controllers) → Services →
 - Category-based article organization
 - Trending articles based on view count
 - Latest articles chronologically sorted
+- Breadcrumb navigation
+
+## 🗄️ Database Configuration
+
+### **Automatic Database Selection**
+The app automatically chooses the appropriate database:
+
+```python
+# Local Development (no DATABASE_URL set)
+SQLite: news.db
+
+# Production (DATABASE_URL environment variable exists)
+PostgreSQL: Managed by hosting platform
+```
+
+### **Environment Detection**
+- **Local:** `sqlite:///news.db` (default fallback)
+- **Production:** Uses `DATABASE_URL` from environment
+- **Render/Heroku:** Automatically provides PostgreSQL connection
+
+### **Benefits**
+- ✅ **Zero Setup** - Works immediately with SQLite
+- ✅ **Production Ready** - Scales with PostgreSQL
+- ✅ **Platform Agnostic** - Works on any hosting service
+- ✅ **Development Friendly** - No database server required locally sorted
 - Breadcrumb navigation
 
 ## 🚀 Development
