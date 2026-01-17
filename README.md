@@ -1,10 +1,10 @@
 # 📰 News Management App
 
-A modern, interactive news management system built with Flask and SQLite, featuring a sleek dark theme with gradient animations and comprehensive CRUD operations.
+A modern, interactive news management system built with Flask and PostgreSQL, featuring a sleek dark theme with gradient animations and comprehensive CRUD operations.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)
 ![Flask](https://img.shields.io/badge/Flask-2.0+-green.svg)
-![SQLite](https://img.shields.io/badge/SQLite-3.0+-orange.svg)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-13+-blue.svg)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-3.0+-blue.svg)
 
 ## ✨ Features
@@ -33,20 +33,30 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-### 3. Initialize the database:
+### 3. Set up PostgreSQL database:
+
+```bash
+# Install PostgreSQL and create database
+createdb news_app
+
+# Set environment variable (optional)
+export DATABASE_URL="postgresql://postgres:password@localhost:5432/news_app"
+```
+
+### 4. Initialize the database:
 
 ```bash
 python app.py
 # Then visit http://127.0.0.1:5000/initdb
 ```
 
-### 4. Run the application:
+### 5. Run the application:
 
 ```bash
 python app.py
 ```
 
-### 5. Open your browser:
+### 6. Open your browser:
 
 ```
 http://127.0.0.1:5000
@@ -130,7 +140,6 @@ News-app/
 │
 ├── 📁 database/                          # 🗃️ DATABASE & STORAGE
 │   ├── 📁 instance/                     # Instance-specific files
-│   │   ├── 📄 news.db                    # SQLite database file
 │   │   └── 📁 uploads/                  # Uploaded media files
 │   │       └── 📄 .gitkeep
 │   │
@@ -190,7 +199,7 @@ User Request → Frontend (Templates) → Backend (Controllers) → Services →
 - **SVG Icons** - Scalable vector graphics
 
 ### **Database**
-- **SQLite** - Lightweight, serverless database
+- **PostgreSQL** - Robust, scalable relational database
 - **IST Timezone** - Indian Standard Time support
 
 ## 🎨 UI Features

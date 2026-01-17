@@ -6,18 +6,20 @@ from backend.router import main_bp
 from backend.models.article import Article
 from backend.models.media import Media
 
-# Database configuration
-if os.environ.get('DATABASE_URL'):
-    # Production: Use PostgreSQL
-    DATABASE_URI = os.environ.get('DATABASE_URL')
-    if DATABASE_URI.startswith('postgres://'):
-        DATABASE_URI = DATABASE_URI.replace('postgres://', 'postgresql://', 1)
-else:
-    # Development: Use SQLite
-    BASE_DIR = Path(__file__).parent
-    DATABASE_PATH = BASE_DIR / 'database' / 'instance' / 'news.db'
-    os.makedirs(DATABASE_PATH.parent, exist_ok=True)
-    DATABASE_URI = f'sqlite:///{DATABASE_PATH}'
+# Database configuration with fallback
+def get_database_uri():
+    database_url = os.environ.get('DATABASE_URL')
+    if database_url:
+        if database_url.startswith('postgres://'):
+            database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        return database_url
+    return 'postgresql://postgres:password@localhost:5432/news_app'
+
+DATABASE_URI = get_database_uri()
+
+# Ensure upload directory exists
+upload_dir = Path('instance/uploads')
+upload_dir.mkdir(parents=True, exist_ok=True)
 
 app = Flask(__name__, 
            template_folder='frontend/templates',
