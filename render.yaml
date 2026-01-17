@@ -2,10 +2,9 @@ services:
   - type: web
     name: news-management-app
     env: python
+    runtime: python-3.11.9
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app --bind 0.0.0.0:$PORT
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.1
       - key: FLASK_ENV
         value: production

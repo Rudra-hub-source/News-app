@@ -14,7 +14,7 @@ def get_database_uri():
         if database_url.startswith('postgres://'):
             database_url = database_url.replace('postgres://', 'postgresql://', 1)
         return database_url
-    return 'postgresql://postgres:password@localhost:5432/news_app'
+    return 'sqlite:///news.db'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = get_database_uri()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -25,8 +25,12 @@ upload_dir = Path('instance/uploads')
 upload_dir.mkdir(parents=True, exist_ok=True)
 
 # Initialize database
-from backend.state import db
-db.init_app(app)
+try:
+    from backend.state import db
+    db.init_app(app)
+except Exception as e:
+    print(f"Database init error: {e}")
+    db = None
 
 # Import and register blueprints
 try:
@@ -36,13 +40,14 @@ except ImportError:
     pass
 
 # Create tables
-with app.app_context():
-    try:
-        from backend.models.article import Article
-        from backend.models.media import Media
-        db.create_all()
-    except Exception as e:
-        print(f"Database setup error: {e}")
+if db:
+    with app.app_context():
+        try:
+            from backend.models.article import Article
+            from backend.models.media import Media
+            db.create_all()
+        except Exception as e:
+            print(f"Database setup error: {e}")
 
 @app.route('/')
 def home():
