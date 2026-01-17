@@ -6,17 +6,23 @@ from backend.router import main_bp
 from backend.models.article import Article
 from backend.models.media import Media
 
-# Get the absolute path to the database
-BASE_DIR = Path(__file__).parent
-DATABASE_PATH = BASE_DIR / 'database' / 'instance' / 'news.db'
-
-# Create database directory if it doesn't exist
-os.makedirs(DATABASE_PATH.parent, exist_ok=True)
+# Database configuration
+if os.environ.get('DATABASE_URL'):
+    # Production: Use PostgreSQL
+    DATABASE_URI = os.environ.get('DATABASE_URL')
+    if DATABASE_URI.startswith('postgres://'):
+        DATABASE_URI = DATABASE_URI.replace('postgres://', 'postgresql://', 1)
+else:
+    # Development: Use SQLite
+    BASE_DIR = Path(__file__).parent
+    DATABASE_PATH = BASE_DIR / 'database' / 'instance' / 'news.db'
+    os.makedirs(DATABASE_PATH.parent, exist_ok=True)
+    DATABASE_URI = f'sqlite:///{DATABASE_PATH}'
 
 app = Flask(__name__, 
            template_folder='frontend/templates',
            static_folder='frontend/static')
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DATABASE_PATH}'
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey')
 
