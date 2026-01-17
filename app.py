@@ -14,7 +14,8 @@ def get_database_uri():
         if database_url.startswith('postgres://'):
             database_url = database_url.replace('postgres://', 'postgresql://', 1)
         return database_url
-    return 'sqlite:///news.db'
+    # Use /tmp for SQLite on Render (ephemeral but works for session)
+    return 'sqlite:////tmp/news.db'
 
 app.config['SQLALCHEMY_DATABASE_URI'] = get_database_uri()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
