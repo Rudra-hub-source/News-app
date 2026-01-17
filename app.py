@@ -24,6 +24,17 @@ app.config['SQLALCHEMY_DATABASE_URI'] = get_database_uri()
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'devkey')
 
+# PostgreSQL connection pool settings for Render
+if 'postgresql' in get_database_uri():
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,
+        'pool_recycle': 300,
+        'connect_args': {
+            'connect_timeout': 10,
+            'application_name': 'news_app'
+        }
+    }
+
 # Ensure upload directory exists
 upload_dir = Path('instance/uploads')
 upload_dir.mkdir(parents=True, exist_ok=True)
@@ -77,13 +88,19 @@ def articles_redirect():
 @app.route('/initdb')
 def init_db():
     try:
-        db.create_all()
-        from backend.services.article_service import ArticleService
-        if len(ArticleService.get_articles()) == 0:
-            ArticleService.create_article('Test Article', 'This is a test article content.', 'Test Author')
-        return 'Database initialized with test data!'
+        if db:
+            db.create_all()
+            from backend.services.article_service import ArticleService
+            existing_articles = ArticleService.get_articles()
+            if len(existing_articles) == 0:
+                ArticleService.create_article('Welcome to News App', 'This is your first article in the news management system.', 'Admin')
+                ArticleService.create_article('Getting Started', 'Learn how to use this application.', 'Editor')
+            return f'Database initialized! Found {len(ArticleService.get_articles())} articles.'
+        else:
+            return 'Database not available'
     except Exception as e:
-        return f"Init DB error: {e}"
+        import traceback
+        return f"Init DB error: {e}\n\nTraceback:\n{traceback.format_exc()}"
 
 @app.route('/debug')
 def debug():
