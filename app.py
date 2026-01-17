@@ -10,10 +10,13 @@ app = Flask(__name__,
 # Database configuration
 def get_database_uri():
     database_url = os.environ.get('DATABASE_URL')
+    print(f"DATABASE_URL found: {database_url is not None}")
     if database_url:
         if database_url.startswith('postgres://'):
             database_url = database_url.replace('postgres://', 'postgresql://', 1)
+        print(f"Using PostgreSQL: {database_url[:50]}...")
         return database_url
+    print("Using SQLite fallback")
     # Use /tmp for SQLite on Render (ephemeral but works for session)
     return 'sqlite:////tmp/news.db'
 
@@ -47,8 +50,15 @@ if db:
             from backend.models.article import Article
             from backend.models.media import Media
             db.create_all()
+            print("Database tables created successfully")
+            
+            # Check if we can query the database
+            article_count = Article.query.count()
+            print(f"Current article count: {article_count}")
         except Exception as e:
             print(f"Database setup error: {e}")
+            import traceback
+            traceback.print_exc()
 
 @app.route('/')
 def home():
@@ -80,9 +90,15 @@ def debug():
     try:
         from backend.services.article_service import ArticleService
         articles = ArticleService.get_articles()
-        return f'Found {len(articles)} articles in database'
+        db_uri = app.config.get('SQLALCHEMY_DATABASE_URI', 'Not set')
+        return f'''Debug Info:
+        Database URI: {db_uri[:50]}...
+        Articles found: {len(articles)}
+        Database URL env: {os.environ.get('DATABASE_URL', 'Not set')[:50]}...
+        '''
     except Exception as e:
-        return f"Debug error: {e}"
+        import traceback
+        return f"Debug error: {e}\n\nTraceback:\n{traceback.format_exc()}"
 
 if __name__ == '__main__':
     # Run on development port
