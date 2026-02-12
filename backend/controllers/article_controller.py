@@ -19,6 +19,34 @@ def index():
 def test():
     return 'Articles controller is working!'
 
+@bp.route('/category/<category>')
+def category(category):
+    """Display articles filtered by category"""
+    try:
+        q = request.args.get('q', '')
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 9, type=int)
+        
+        # Get category name for display
+        categories = dict(ArticleService.get_all_categories())
+        category_name = categories.get(category, category.title())
+        
+        articles, total, has_more = ArticleService.get_articles_paginated(q, page, per_page, category=category)
+        
+        return render_template(
+            'articlecategory.html', 
+            articles=articles, 
+            category=category, 
+            category_name=category_name,
+            categories=ArticleService.get_all_categories(),
+            q=q, 
+            page=page, 
+            total=total, 
+            has_more=has_more
+        )
+    except Exception as e:
+        return f'Category page error: {str(e)}', 500
+
 @bp.route('/<int:article_id>')
 def detail(article_id):
     article = ArticleService.get_article(article_id)
@@ -32,11 +60,12 @@ def create():
         title = request.form['title'].strip()
         content = request.form['content'].strip()
         author = request.form.get('author', 'Anonymous').strip() or 'Anonymous'
+        category = request.form.get('category', 'general').strip()
         if not title or not content:
             flash('Title and content are required.', 'error')
             return redirect(url_for('main.articles.create'))
         try:
-            ArticleService.create_article(title, content, author)
+            ArticleService.create_article(title, content, author, category)
             flash('Article created successfully!', 'success')
             return redirect(url_for('main.articles.index'))
         except Exception as e:
@@ -44,7 +73,8 @@ def create():
             return redirect(url_for('main.articles.create'))
     
     articles = ArticleService.get_articles()
-    return render_template('article_create.html', articles=articles)
+    categories = ArticleService.get_all_categories()
+    return render_template('article_create.html', articles=articles, categories=categories)
 
 @bp.route('/edit/<int:article_id>', methods=['GET', 'POST'])
 def edit(article_id):
@@ -53,16 +83,18 @@ def edit(article_id):
         title = request.form['title'].strip()
         content = request.form['content'].strip()
         author = request.form.get('author', '').strip()
+        category = request.form.get('category', 'general').strip()
         if not title or not content:
             flash('Title and content are required.', 'error')
             return redirect(url_for('main.articles.edit', article_id=article_id))
-        ArticleService.update_article(article_id, title, content, author)
+        ArticleService.update_article(article_id, title, content, author, category)
         flash('Article updated successfully!', 'success')
         return redirect(url_for('main.articles.detail', article_id=article_id))
     
     from backend.models.media import Media
     article_images = Media.query.filter_by(article_id=article_id).all()
-    return render_template('article_edit.html', article=article, article_images=article_images)
+    categories = ArticleService.get_all_categories()
+    return render_template('article_edit.html', article=article, article_images=article_images, categories=categories)
 
 @bp.route('/delete/<int:article_id>', methods=['POST'])
 def delete(article_id):

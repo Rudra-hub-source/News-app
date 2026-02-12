@@ -82,7 +82,8 @@ def articles_redirect():
         from backend.services.article_service import ArticleService
         q = request.args.get('q', '')
         articles = ArticleService.get_articles(q)
-        return render_template('articles.html', articles=articles, q=q)
+        categories = ArticleService.get_all_categories()
+        return render_template('articles.html', articles=articles, q=q, categories=categories)
     except Exception as e:
         return f"Articles error: {e}"
 

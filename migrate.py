@@ -2,7 +2,8 @@ import sqlite3
 import os
 
 def migrate_database():
-    db_path = 'instance/news.db'
+    # Use the same path as app.py (/tmp/news.db)
+    db_path = '/tmp/news.db'
     
     if not os.path.exists(db_path):
         print("Database doesn't exist yet. It will be created with the new schema.")
@@ -22,6 +23,32 @@ def migrate_database():
         print("view_count column added successfully!")
     else:
         print("view_count column already exists.")
+    
+    # Check if category column exists in article table
+    if 'category' not in columns:
+        print("Adding category column to article table...")
+        cursor.execute("ALTER TABLE article ADD COLUMN category VARCHAR(50) DEFAULT 'general'")
+        conn.commit()
+        print("category column added successfully!")
+    else:
+        print("category column already exists.")
+    
+    # Check if category table exists
+    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='category'")
+    if not cursor.fetchone():
+        print("Creating category table...")
+        cursor.execute('''
+            CREATE TABLE category (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name VARCHAR(50) UNIQUE NOT NULL,
+                display_name VARCHAR(100) NOT NULL,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+            )
+        ''')
+        conn.commit()
+        print("Category table created successfully!")
+    else:
+        print("Category table already exists.")
     
     # Check if media table exists
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='media'")
