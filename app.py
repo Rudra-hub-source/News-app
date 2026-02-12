@@ -59,10 +59,38 @@ except ImportError:
 if db:
     with app.app_context():
         try:
-            from backend.models.article import Article
+            from backend.models.article import Article, Category
             from backend.models.media import Media
             db.create_all()
             print("Database tables created successfully")
+            
+            # Add missing columns to existing tables (for PostgreSQL)
+            try:
+                from sqlalchemy import text
+                # Add view_count column if missing
+                try:
+                    db.session.execute(text("ALTER TABLE article ADD COLUMN IF NOT EXISTS view_count INTEGER DEFAULT 0"))
+                    db.session.commit()
+                except:
+                    pass
+                
+                # Add category column if missing
+                try:
+                    db.session.execute(text("ALTER TABLE article ADD COLUMN IF NOT EXISTS category VARCHAR(50) DEFAULT 'general'"))
+                    db.session.commit()
+                except:
+                    pass
+                
+                # Update existing articles to have default category
+                try:
+                    db.session.execute(text("UPDATE article SET category = 'general' WHERE category IS NULL"))
+                    db.session.commit()
+                except:
+                    pass
+                    
+                print("Columns added/verified successfully")
+            except Exception as col_error:
+                print(f"Column update: {col_error}")
             
             # Check if we can query the database
             article_count = Article.query.count()
@@ -119,7 +147,44 @@ def debug():
         import traceback
         return f"Debug error: {e}\n\nTraceback:\n{traceback.format_exc()}"
 
+@app.route('/setup-categories')
+def setup_categories():
+    """Setup route to add missing columns and create category table"""
+    try:
+        if db:
+            from sqlalchemy import text
+            db.create_all()
+            
+            # Add view_count column if missing
+            try:
+                db.session.execute(text("ALTER TABLE article ADD COLUMN IF NOT EXISTS view_count INTEGER DEFAULT 0"))
+                db.session.commit()
+            except:
+                pass
+            
+            # Add category column if missing
+            try:
+                db.session.execute(text("ALTER TABLE article ADD COLUMN IF NOT EXISTS category VARCHAR(50) DEFAULT 'general'"))
+                db.session.commit()
+            except:
+                pass
+            
+            # Update existing articles to have default category
+            try:
+                db.session.execute(text("UPDATE article SET category = 'general' WHERE category IS NULL"))
+                db.session.commit()
+            except:
+                pass
+            
+            return "Database setup completed! Columns added successfully."
+        else:
+            return "Database not available"
+    except Exception as e:
+        import traceback
+        return f"Setup error: {e}\n\nTraceback:\n{traceback.format_exc()}"
+
 if __name__ == '__main__':
     # Run on development port
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port, debug=os.environ.get('FLASK_ENV') != 'production')
+
